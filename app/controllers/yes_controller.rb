@@ -22,8 +22,10 @@ def pipe
 @msg = @account.messages.list({:to => "9172424245"}).first.body.downcase
 #assign the sender to a var
 @sender = @account.messages.list({:to => "9172424245"}).first.from
+#remove the leading nmbr's '+' & '1'
 @sender.delete!('+')
 @sender[0] = ''
+
 #see if sender's number matches a chef in db
 @chef = Chef.find_by(phone_number: @sender)
 
@@ -34,7 +36,7 @@ if @chef
   
   if @msg.include?("pipe")
     
-    @matching_recipes = @chef.recipes.select{ |recipe| @msg.include?(recipe.name)}
+    @matching_recipes = @chef.recipes.select{ |recipe| @msg.include?(recipe.name.downcase)}
 
       if @matching_recipes[0] != nil 
        @pipe = @matching_recipes[0].ingredients
